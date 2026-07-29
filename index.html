@@ -1,0 +1,1825 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Macroscopic Description for Networks of Spiking Neurons</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css"
+      integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="styles.css?v=27" />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js"
+      integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <main class="slides">
+      <section class="slide cover" id="cover" aria-label="Title slide">
+        <div class="slide-content">
+          <p class="kicker">Paper walkthrough</p>
+          <h1>Macroscopic Description for Networks of Spiking Neurons</h1>
+
+          <div class="authors" aria-label="Authors">
+            <span>Ernest Montbrió<sup>1</sup></span>
+            <span>Diego Pazó<sup>2</sup></span>
+            <span>Alex Roxin<sup>3</sup></span>
+          </div>
+
+          <ol class="affiliations" aria-label="Affiliations">
+            <li>
+              Center for Brain and Cognition, Department of Information and
+              Communication Technologies, Universitat Pompeu Fabra, 08018
+              Barcelona, Spain
+            </li>
+            <li>
+              Instituto de Física de Cantabria (IFCA), CSIC-Universidad de
+              Cantabria, 39005 Santander, Spain
+            </li>
+            <li>
+              Centre de Recerca Matemàtica, Campus de Bellaterra, Edifici C,
+              08193 Bellaterra, Spain
+            </li>
+          </ol>
+        </div>
+
+        <a class="next-slide" href="#abstract" aria-label="Go to abstract">
+          <span aria-hidden="true">↓</span>
+        </a>
+      </section>
+
+      <section class="slide abstract" id="abstract" aria-label="Abstract slide">
+        <div class="slide-content">
+          <p class="kicker">Abstract</p>
+          <h2>Abstract</h2>
+          <p>
+            A major goal of neuroscience, statistical physics, and nonlinear
+            dynamics is to understand how brain function arises from the
+            collective dynamics of networks of spiking neurons. This challenge
+            has been chiefly addressed through large-scale numerical
+            simulations. Alternatively, researchers have formulated mean-field
+            theories to gain insight into macroscopic states of large neuronal
+            networks in terms of the collective firing activity of the neurons,
+            or the firing rate. However, these theories have <strong>not</strong> succeeded in
+            establishing an exact <strong>correspondence</strong> between the <strong>firing rate</strong> of the
+            network and the underlying <strong>microscopic descriptions</strong>, particularly
+            when trying to describe neuronal synchronization. Here, we provide
+            the derivation of a set of <strong>exact macroscopic equations for a network
+            of spiking neurons.</strong> Our results reveal that the <strong>spike generation</strong>
+            mechanism of <strong>individual neurons</strong> introduces an effective coupling
+            between two biophysically relevant <strong>macroscopic</strong> quantities, the
+            <strong>firing rate</strong> and the <strong>mean membrane potential</strong>, which together <strong>govern</strong>
+            the evolution of the <strong>neuronal network</strong>. The resulting equations
+            exactly describe <strong>all possible macroscopic</strong> dynamical <strong>states</strong> of the
+            network, <strong>including</strong> states of <strong>synchronous</strong> spiking activity. Finally,
+            we show that the <strong>firing-rate description</strong> is related, via a
+            conformal map, to a <strong>low-dimensional description</strong> in terms of the
+            <strong>Kuramoto order parameter</strong>, called Ott-Antonsen theory. We anticipate that our
+            results will be an important tool in investigating how large
+            networks of spiking neurons self-organize in time to process and
+            encode information in the brain.
+          </p>
+
+          <aside class="extra-visual">
+            <p class="extra-label">Extra</p>
+            <div class="abstract-schema" aria-label="Microscopic to macroscopic schema">
+              <div class="schema-node">
+                <span>microscopic</span>
+                <strong>spike generation mechanism of individual neurons</strong>
+              </div>
+              <div class="schema-arrow" aria-hidden="true">→</div>
+              <div class="schema-node">
+                <span>macroscopic</span>
+                <strong>firing rate and mean membrane potential</strong>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <a class="next-slide" href="#introduction" aria-label="Go to introduction">
+          <span aria-hidden="true">↓</span>
+        </a>
+      </section>
+
+      <section class="slide introduction" id="introduction" aria-label="Introduction slide">
+        <div class="slide-content">
+          <p class="kicker">I. Introduction</p>
+          <h2>Introduction</h2>
+          <p>
+            The processing and coding of information in the brain necessarily
+            imply the coordinated activity of large ensembles of neurons. Within
+            sensory regions of the cortex, many cells show similar responses to
+            a given stimulus, indicating a high degree of neuronal redundancy at
+            the local level. This suggests that information is encoded in the
+            population response and, hence, can be captured via macroscopic
+            measures of the network activity [1].
+          </p>
+
+          <aside class="extra-visual">
+            <p class="extra-label">Extra</p>
+            <figure class="intro-visual">
+              <img
+                class="controlled-gif"
+                id="introGif"
+                src="assets/coordinated-network-poster.png"
+                data-poster="assets/coordinated-network-poster.png"
+                data-gif="assets/coordinated-network.gif"
+                alt="A neuronal network where several regions light up together in coordinated activity."
+              />
+              <figcaption>coordinated population response</figcaption>
+            </figure>
+          </aside>
+
+          <p>
+            Moreover, the collective behavior of large neuronal networks is
+            particularly relevant given that current brain measurement
+            techniques, such as electroencephalography or functional magnetic
+            resonance imaging, provide data that are necessarily averaged over
+            the activity of a large number of neurons.
+          </p>
+
+          <aside class="extra-visual">
+            <p class="extra-label">Extra</p>
+            <figure class="intro-visual">
+              <img
+                class="controlled-gif"
+                src="assets/brain-mri-activity-poster.png"
+                data-poster="assets/brain-mri-activity-poster.png"
+                data-gif="assets/brain-mri-activity.gif"
+                alt="A stylized 3D brain volume with several regions of activity lighting up, representing averaged MRI-like measurements."
+              />
+              <figcaption>averaged brain activity measurements</figcaption>
+            </figure>
+          </aside>
+
+          <p>
+            The macroscopic dynamics of neuronal ensembles has been extensively
+            studied through computational models of large networks of
+            recurrently coupled spiking neurons, including Hodgkin-Huxley-type
+            conductance-based neurons [2], as well as simplified neuron models;
+            see, e.g., Refs. [3–5]. In parallel, researchers have sought to
+            develop statistical descriptions of neuronal networks, mainly in
+            terms of a macroscopic observable that measures the mean rate at
+            which neurons emit spikes, the firing rate [6–20]. These
+            descriptions, called firing-rate equations (FREs), have been proven
+            to be extremely useful in understanding general computational
+            principles underlying functions such as memory [21,22], visual
+            processing [23–25], motor control [26], or decision making [27].
+          </p>
+
+          <p>
+            Despite these efforts, to date there is no exact theory linking the
+            dynamics of a large network of spiking neurons with that of the
+            firing rate. Specifically, current macroscopic descriptions do not
+            offer a precise correspondence between the microscopic dynamics of
+            the individual neurons, e.g., individual membrane potentials, and
+            the firing-rate dynamics of the neuronal network.
+          </p>
+
+          <p>
+            Indeed, FREs are generally derived through heuristic arguments that
+            rely on the underlying spiking activity of the neurons being
+            asynchronous and hence uncorrelated. As such, firing-rate
+            descriptions are not sufficient to describe network states involving
+            some degree of spike synchronization. Synchronization is, however, a
+            ubiquitous phenomenon in the brain, and its potential role in
+            neuronal computation is the subject of intense research [14,28–34].
+            Hence, the lack of firing-rate descriptions for synchronous states
+            limits the range of applicability of mean-field theories to
+            investigate neuronal dynamics.
+          </p>
+
+          <aside class="extra-visual">
+            <p class="extra-label">Extra</p>
+            <div class="network-comparison" aria-label="Firing-rate assumption and synchronization comparison">
+              <figure class="intro-visual compact-visual">
+                <img
+                  class="controlled-gif"
+                  src="assets/network-chaotic-poster.png"
+                  data-poster="assets/network-chaotic-poster.png"
+                  data-gif="assets/network-chaotic.gif"
+                  alt="A chaotic asynchronous neuronal network with uncorrelated activity."
+                />
+                <figcaption>FREs' supposition: asynchronous activity</figcaption>
+              </figure>
+
+              <figure class="intro-visual compact-visual">
+                <img
+                  class="controlled-gif"
+                  src="assets/network-synchronized-poster.png"
+                  data-poster="assets/network-synchronized-poster.png"
+                  data-gif="assets/network-synchronized.gif"
+                  alt="A neuronal network whose nodes light up together in synchronized activity."
+                />
+                <figcaption>Dynamics not explained: synchronization</figcaption>
+              </figure>
+            </div>
+          </aside>
+
+          <p>
+            Here, we propose a method to derive the <strong>FREs</strong> for networks of
+            <strong>heterogeneous, all-to-all coupled quadratic integrate-and-fire (QIF)
+            neurons</strong>, which is <strong>exact in the thermodynamic limit</strong>, i.e., for large
+            numbers of neurons. We consider an ansatz for the <strong>distribution</strong> of
+            the neurons’ <strong>membrane potentials</strong> that we denominate the <strong>Lorentzian
+            ansatz (LA)</strong>. The LA solves the corresponding continuity equation
+            <strong>exactly</strong>, making the system amenable to theoretical analysis.
+            Specifically, for particular distributions of the heterogeneity, the
+            LA yields a system of two ordinary differential equations for the
+            firing rate and mean membrane potential of the neuronal population.
+            <strong>These equations fully describe the macroscopic states of the
+            network—including synchronized states</strong>, and represent the first
+            example of an exact firing-rate description for a network of
+            recurrently connected spiking neurons. Finally, we show how the LA
+            transforms, via a conformal mapping, into the so-called
+            Ott-Antonsen ansatz (OA) that is used extensively to investigate the
+            low-dimensional dynamics of large populations of phase oscillators
+            in terms of the Kuramoto order parameter [35].
+          </p>
+
+          <aside class="extra-visual">
+            <p class="extra-label">Extra</p>
+            <div class="concept-map" aria-label="Concept map for the exact FRE derivation">
+              <div class="concept-node">
+                <span>network</span>
+                <strong>heterogeneous all-to-all QIF neurons</strong>
+              </div>
+              <div class="concept-arrow" aria-hidden="true">→</div>
+              <div class="concept-node">
+                <span>ansatz</span>
+                <strong>Lorentzian distribution of membrane potentials</strong>
+              </div>
+              <div class="concept-arrow" aria-hidden="true">→</div>
+              <div class="concept-node">
+                <span>exact step</span>
+                <strong>continuity equation solved exactly</strong>
+              </div>
+              <div class="concept-arrow" aria-hidden="true">→</div>
+              <div class="concept-node">
+                <span>output</span>
+                <strong>two ODEs for firing rate and mean membrane potential</strong>
+              </div>
+              <div class="concept-node concept-wide">
+                <strong>We obtain a macroscopic description of all network states, including synchronized states.</strong>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <a class="next-slide" href="#model-description" aria-label="Go to model description">
+          <span aria-hidden="true">↓</span>
+        </a>
+      </section>
+
+      <section class="slide model-description" id="model-description" aria-label="Model description slide">
+        <div class="slide-content">
+          <p class="kicker">Model Description</p>
+          <h2>Model Description</h2>
+          <p>
+            Hodgkin-Huxley-type neuronal models can be broadly classified into
+            two classes, according to the nature of their transition to spiking
+            in response to an injected current [36,37]. Neuronal models with
+            so-called class I excitability generate action potentials with
+            arbitrarily low frequency, depending on the strength of the applied
+            current. This occurs when a resting state disappears through a
+            saddle-node bifurcation. In contrast, in neurons with class II
+            excitability, the action potentials are generated with a finite
+            frequency. This occurs when the resting state loses stability via a
+            Hopf bifurcation. The QIF neuron is the canonical model for class I
+            neurons, and, thus, generically describes their dynamics near the
+            spiking threshold [5,38,39]. Our aim here is to derive the FREs
+            corresponding to a heterogeneous all-to-all coupled population of
+            𝑁 QIF neurons. The correspondence is exact in the thermodynamic
+            limit, i.e., when 𝑁 →∞ (this convergence was studied recently in
+            Ref. [40]).
+          </p>
+
+          <div class="extra-visual extra-bifurcation-explainer">
+            <p class="extra-label">Extra</p>
+          <aside class="bifurcation-key" aria-labelledby="bifurcation-key-title">
+            <p class="bifurcation-key-kicker">How to read the animations</p>
+            <h3 id="bifurcation-key-title">An oscillation is not automatically a spike</h3>
+            <p class="bifurcation-key-intro">
+              A spike is a large voltage excursion, not simply any movement of
+              the state. Ask two questions: does the motion reach the spiking
+              excursion, and does it decay or sustain itself?
+            </p>
+
+            <div class="bifurcation-key-grid">
+              <article>
+                <span>Class I · saddle-node</span>
+                <p>
+                  Below onset, the QIF state relaxes to the stable rest unless
+                  it crosses the unstable threshold. After the two states
+                  collide and disappear, the voltage escapes, spikes, and
+                  resets. The slow passage through the former resting region
+                  lets firing begin arbitrarily close to 0 Hz.
+                </p>
+              </article>
+
+              <article>
+                <span>Class II · Hopf</span>
+                <p>
+                  Before onset, a perturbation can produce small voltage
+                  oscillations that decay without spiking. After Hopf, rest is
+                  unstable and the motion settles onto a sustained cycle. In
+                  the spiking regime shown here, that cycle includes a spike on
+                  every turn and already has a nonzero frequency.
+                </p>
+              </article>
+            </div>
+
+            <p class="bifurcation-key-rule">
+              <strong>No spike:</strong> subthreshold motion that returns to rest.
+              <span aria-hidden="true">→</span>
+              <strong>Spike train:</strong> a sustained cycle that reaches the spiking excursion.
+            </p>
+          </aside>
+
+          <div class="class-one-comparison" aria-label="Class I saddle-node bifurcation sequence">
+            <figure class="intro-visual compact-visual">
+              <div class="figure-labels single-label" aria-hidden="true">
+                <div>
+                  <span>Class I</span>
+                  <strong>subthreshold relaxation: no spike</strong>
+                </div>
+              </div>
+              <img
+                class="controlled-gif"
+                src="assets/class-one-no-fire-poster.png"
+                data-poster="assets/class-one-no-fire-poster.png"
+                data-gif="assets/class-one-no-fire.gif"
+                alt="Class I neuron resting on the stable branch without crossing the unstable threshold."
+              />
+              <figcaption>The state returns to stable rest. This relaxation is not a voltage oscillation or a spike.</figcaption>
+            </figure>
+
+            <figure class="intro-visual compact-visual">
+              <div class="figure-labels single-label" aria-hidden="true">
+                <div>
+                  <span>Class I</span>
+                  <strong>a spark crosses the threshold</strong>
+                </div>
+              </div>
+              <img
+                class="controlled-gif"
+                src="assets/class-one-fire-poster.png"
+                data-poster="assets/class-one-fire-poster.png"
+                data-gif="assets/class-one-fire.gif"
+                alt="Class I neuron pushed below the unstable threshold and producing a spike."
+              />
+              <figcaption>Crossing the unstable threshold sends the voltage through one spike; it then resets.</figcaption>
+            </figure>
+
+            <figure class="intro-visual compact-visual">
+              <div class="figure-labels single-label" aria-hidden="true">
+                <div>
+                  <span>Class I + small current</span>
+                  <strong>the stable state is closer to threshold</strong>
+                </div>
+              </div>
+              <img
+                class="controlled-gif"
+                src="assets/class-one-current-small-fire-poster.png"
+                data-poster="assets/class-one-current-small-fire-poster.png"
+                data-gif="assets/class-one-current-small-fire.gif"
+                alt="Class I neuron with a small injected current, closer to threshold, producing a spike after a small perturbation."
+              />
+              <figcaption>Current narrows the gap; the mechanism is unchanged, but a smaller push now crosses the threshold.</figcaption>
+            </figure>
+
+            <figure class="intro-visual compact-visual">
+              <div class="figure-labels single-label" aria-hidden="true">
+                <div>
+                  <span>Class I + beyond threshold</span>
+                  <strong>rest and threshold have disappeared</strong>
+                </div>
+              </div>
+              <img
+                class="controlled-gif"
+                src="assets/class-one-after-threshold-poster.png"
+                data-poster="assets/class-one-after-threshold-poster.png"
+                data-gif="assets/class-one-after-threshold.gif"
+                alt="Class I neuron after the saddle-node bifurcation, with no resting state and ongoing spiking."
+              />
+              <figcaption>With no resting state left, the voltage repeatedly escapes, spikes, and resets. The slow bottleneck allows an onset near 0 Hz.</figcaption>
+            </figure>
+          </div>
+
+          <div class="class-two-section" aria-label="Class II Hopf bifurcation sequence">
+            <div class="class-two-comparison" aria-label="Class II stable rest and damped perturbation comparison">
+              <figure class="intro-visual compact-visual">
+                <div class="figure-labels single-label" aria-hidden="true">
+                  <div>
+                    <span>Class II</span>
+                    <strong>at rest before Hopf</strong>
+                  </div>
+                </div>
+                <img
+                  class="controlled-gif"
+                  src="assets/class-two-no-fire-poster.png"
+                  data-poster="assets/class-two-no-fire-poster.png"
+                  data-gif="assets/class-two-no-fire.gif"
+                  alt="Class II neuron below the Hopf bifurcation, resting on the stable state without spiking."
+                />
+                <figcaption>At the exact resting state, nothing oscillates and the voltage remains constant.</figcaption>
+              </figure>
+
+              <figure class="intro-visual compact-visual">
+                <div class="figure-labels single-label" aria-hidden="true">
+                  <div>
+                    <span>Class II</span>
+                    <strong>perturbed before Hopf</strong>
+                  </div>
+                </div>
+                <img
+                  class="controlled-gif"
+                  src="assets/class-two-damped-perturbation-poster.png"
+                  data-poster="assets/class-two-damped-perturbation-poster.png"
+                  data-gif="assets/class-two-damped-perturbation.gif"
+                  alt="Class II neuron below Hopf with a perturbation that decays back to rest."
+                />
+                <figcaption>These are genuine voltage oscillations, but they are small and decay, so they never reach the spiking excursion.</figcaption>
+              </figure>
+            </div>
+
+            <figure class="intro-visual after-threshold-visual">
+              <div class="figure-labels single-label" aria-hidden="true">
+                <div>
+                  <span>Class II + after Hopf</span>
+                  <strong>self-sustained finite-frequency firing</strong>
+                </div>
+              </div>
+              <img
+                class="controlled-gif"
+                src="assets/class-two-hopf-onset-poster.png"
+                data-poster="assets/class-two-hopf-onset-poster.png"
+                data-gif="assets/class-two-hopf-onset.gif"
+                alt="Class II neuron after the Hopf bifurcation, with self-sustained finite-frequency firing."
+              />
+              <figcaption>Rest is now unstable: the sustained cycle includes a spike on every turn and begins at a nonzero frequency.</figcaption>
+            </figure>
+          </div>
+          </div>
+
+          <div class="qif-dynamics">
+            <p>
+              The microscopic state of the population of QIF neurons is given
+              by the membrane potentials
+              <span class="tex-inline" data-tex="\{V_j\}_{j=1,\ldots,N}">{Vj}j=1,…,N</span>,
+              which obey the following ordinary differential equations [5]:
+            </p>
+
+            <div class="qif-equation" role="math" aria-label="V dot sub j equals V sub j squared plus I sub j. If V sub j is greater than or equal to V sub p, then V sub j is reset to V sub r.">
+              <div
+                class="qif-tex-display"
+                data-tex="\dot V_j = V_j^2 + I_j,\qquad \text{if } V_j \ge V_p,\text{ then } V_j \leftarrow V_r."
+                aria-hidden="true"
+              >V̇j = Vj² + Ij, if Vj ≥ Vp, then Vj ← Vr.</div>
+              <span class="equation-number">(1)</span>
+            </div>
+
+            <p>
+              Here, the overdot denotes the time derivative and
+              <span class="tex-inline" data-tex="I_j">Ij</span>
+              represents an input current. Each time a neuron’s membrane
+              potential <span class="tex-inline" data-tex="V_j">Vj</span>
+              reaches the peak value <span class="tex-inline" data-tex="V_p">Vp</span>,
+              the neuron emits a spike and its voltage is reset to the value
+              <span class="tex-inline" data-tex="V_r">Vr</span>. In our analysis,
+              we consider the limit
+              <span class="tex-inline" data-tex="V_p=-V_r\to\infty">Vp = −Vr → ∞</span>.
+              This resetting rule captures
+              the spike reset as well as the refractoriness of the neuron.
+              Without loss of generality, we rescale the time and the voltage
+              in Eq. (1) to absorb any coefficients that would have appeared
+              in the first two terms.
+            </p>
+
+            <aside class="extra-visual">
+              <p class="extra-label">Extra</p>
+            <div class="qif-simulator" id="qif-simulator">
+              <div class="qif-simulator-header">
+                <div>
+                  <span class="simulator-kicker">Interactive trajectory</span>
+                  <strong>Membrane potential under the QIF law</strong>
+                </div>
+                <button class="simulator-toggle" id="qif-animation-toggle" type="button">Pause animation</button>
+              </div>
+
+              <div class="qif-controls" aria-label="QIF simulation parameters">
+                <label for="qif-current">
+                  <span><span>Input current <i>I</i></span><output id="qif-current-value" for="qif-current">0.50</output></span>
+                  <input id="qif-current" type="range" min="-1" max="2" step="0.05" value="0.5" />
+                </label>
+                <label for="qif-peak">
+                  <span><span>Peak <i>V</i><sub>p</sub></span><output id="qif-peak-value" for="qif-peak">5.0</output></span>
+                  <input id="qif-peak" type="range" min="2" max="8" step="0.5" value="5" />
+                </label>
+                <label for="qif-reset">
+                  <span><span>Reset <i>V</i><sub>r</sub></span><output id="qif-reset-value" for="qif-reset">−5.0</output></span>
+                  <input id="qif-reset" type="range" min="-8" max="-2" step="0.5" value="-5" />
+                </label>
+              </div>
+
+              <div class="qif-live-state" aria-live="polite">
+                <span>𝑡 = <strong id="qif-time-value">0.00</strong></span>
+                <span>𝑉 = <strong id="qif-voltage-value">−5.00</strong></span>
+                <span>mean rate = <strong id="qif-rate-value">0.00</strong> spikes / time unit</span>
+              </div>
+
+              <svg
+                class="qif-chart"
+                id="qif-chart"
+                viewBox="0 0 900 360"
+                role="img"
+                aria-labelledby="qif-chart-title qif-chart-description"
+              >
+                <title id="qif-chart-title">QIF membrane potential trajectory</title>
+                <desc id="qif-chart-description">The voltage follows V dot equals V squared plus I, spikes at the peak voltage, and jumps to the reset voltage. The sliders update the trajectory.</desc>
+                <g id="qif-grid"></g>
+                <line id="qif-peak-line" class="qif-reference peak"></line>
+                <line id="qif-reset-line" class="qif-reference reset"></line>
+                <text id="qif-peak-label" class="qif-reference-label"></text>
+                <text id="qif-reset-label" class="qif-reference-label"></text>
+                <path id="qif-voltage-path" class="qif-voltage-path"></path>
+                <g id="qif-spike-marks"></g>
+                <line id="qif-time-cursor" class="qif-time-cursor"></line>
+                <circle id="qif-state-dot" class="qif-state-dot" r="6"></circle>
+                <text class="qif-axis-label" x="450" y="350" text-anchor="middle">time 𝑡</text>
+                <text class="qif-axis-label" x="18" y="180" text-anchor="middle" transform="rotate(-90 18 180)">voltage 𝑉</text>
+              </svg>
+            </div>
+            </aside>
+
+            <p>The form for the input currents is</p>
+
+            <div class="qif-equation" role="math" aria-label="I sub j equals eta sub j plus J s of t plus I of t.">
+              <div
+                class="qif-tex-display"
+                data-tex="I_j = \eta_j + J s(t) + I(t),"
+                aria-hidden="true"
+              >Ij = ηj + Js(t) + I(t),</div>
+              <span class="equation-number">(2)</span>
+            </div>
+
+            <p>
+              where the external input has a heterogeneous, quenched component
+              <span class="tex-inline" data-tex="\eta_j">ηj</span> as well as a
+              common time-varying component
+              <span class="tex-inline" data-tex="I(t)">I(t)</span>, and the recurrent
+              input is the synaptic weight <span class="tex-inline" data-tex="J">J</span>
+              times the mean synaptic activation
+              <span class="tex-inline" data-tex="s(t)">s(t)</span>, which is written as
+            </p>
+
+            <div class="qif-equation qif-equation-long" role="math" aria-label="s of t equals one over N times the sum from j equals one to N, times the sum over spikes k with t sub k superscript j less than t, times the integral from minus infinity to t of d t prime a sub tau of t minus t prime delta of t prime minus t sub k superscript j.">
+              <div
+                class="qif-tex-display"
+                data-tex="\begin{aligned}s(t) &= \frac{1}{N}\sum_{j=1}^{N}\sum_{k\,|\,t_k^j&lt;t}\\[-0.1em]&\quad \int_{-\infty}^{t}dt'\,a_\tau(t-t')\,\delta(t'-t_k^j).\end{aligned}"
+                aria-hidden="true"
+              >s(t) = (1/N) Σj Σk ∫ aτ(t−t′) δ(t′−tkj) dt′.</div>
+              <span class="equation-number">(3)</span>
+            </div>
+
+            <p>
+              Here, <span class="tex-inline" data-tex="t_k^j">tkj</span> is the time
+              of the <span class="tex-inline" data-tex="k\text{th}">kth</span> spike
+              of the <span class="tex-inline" data-tex="j\text{th}">jth</span> neuron,
+              <span class="tex-inline" data-tex="\delta(t)">δ(t)</span> is the Dirac
+              delta function, and <span class="tex-inline" data-tex="a_\tau(t)">aτ(t)</span>
+              is the normalized synaptic activation caused by a single presynaptic
+              spike with time scale <span class="tex-inline" data-tex="\tau">τ</span>,
+              e.g., <span class="tex-inline" data-tex="a_\tau(t)=e^{-t/\tau}/\tau">aτ(t) = e−t/τ/τ</span>.
+            </p>
+
+            <aside class="extra-visual">
+              <p class="extra-label">Extra</p>
+            <figure class="synaptic-visual">
+              <svg
+                id="synaptic-chart"
+                viewBox="0 0 900 270"
+                role="img"
+                aria-labelledby="synaptic-chart-title synaptic-chart-description"
+              >
+                <title id="synaptic-chart-title">How presynaptic spikes build the mean synaptic activation</title>
+                <desc id="synaptic-chart-description">Presynaptic spikes occur at discrete times. Each spike adds a decaying activation pulse, and their sum is the mean synaptic activation s of t.</desc>
+                <g id="synaptic-grid"></g>
+                <g id="synaptic-spikes"></g>
+                <g id="synaptic-kernels"></g>
+                <path id="synaptic-sum"></path>
+                <text class="synaptic-axis-label" x="22" y="58" text-anchor="middle" transform="rotate(-90 22 58)">spikes</text>
+                <text class="synaptic-axis-label" x="22" y="174" text-anchor="middle" transform="rotate(-90 22 174)">s(t)</text>
+                <text class="synaptic-axis-label" x="450" y="258" text-anchor="middle">time t</text>
+                <text class="synaptic-direct-label kernel" x="570" y="126">individual pulses aτ</text>
+                <text class="synaptic-direct-label sum" x="735" y="188">sum s(t)</text>
+              </svg>
+              <figcaption>Each presynaptic spike contributes one decaying pulse. The pulses that are still active add together to form <span class="tex-inline" data-tex="s(t)">s(t)</span>.</figcaption>
+            </figure>
+            </aside>
+
+            <section class="continuous-formulation" aria-labelledby="continuous-formulation-title">
+              <h3 id="continuous-formulation-title"><span>A.</span> Continuous formulation</h3>
+
+              <p>
+                In the thermodynamic limit
+                <span class="tex-inline" data-tex="N\to\infty">N → ∞</span>, we
+                drop the indices in Eqs. (1) and (2) and denote
+                <span class="tex-inline" data-tex="\rho(V\mid\eta,t)\,dV">ρ(V|η,t)dV</span>
+                as the fraction of neurons with membrane potentials between
+                <span class="tex-inline" data-tex="V">V</span> and
+                <span class="tex-inline" data-tex="V+dV">V + dV</span> and parameter
+                <span class="tex-inline" data-tex="\eta">η</span>, at time
+                <span class="tex-inline" data-tex="t">t</span>. Accordingly,
+                parameter <span class="tex-inline" data-tex="\eta">η</span> now
+                becomes a continuous random variable distributed according to a
+                probability distribution function
+                <span class="tex-inline" data-tex="g(\eta)">g(η)</span>. The total
+                voltage density at time <span class="tex-inline" data-tex="t">t</span>
+                is then given by
+                <span class="tex-inline" data-tex="\int_{-\infty}^{\infty}\rho(V\mid\eta,t)g(\eta)\,d\eta">∫ρ(V|η,t)g(η)dη</span>.
+              </p>
+
+              <p>The conservation of the number of neurons leads to the following continuity equation:</p>
+
+              <div class="qif-equation" role="math" aria-label="Partial derivative of rho with respect to time plus partial derivative with respect to voltage of the quantity V squared plus eta plus J s plus I, times rho, equals zero.">
+                <div
+                  class="qif-tex-display"
+                  data-tex="\partial_t\rho+\partial_V\!\left[(V^2+\eta+Js+I)\rho\right]=0,"
+                  aria-hidden="true"
+                >∂tρ + ∂V[(V² + η + Js + I)ρ] = 0,</div>
+                <span class="equation-number">(4)</span>
+              </div>
+
+              <p>where we explicitly include the velocity given by Eqs. (1) and (2).</p>
+
+              <aside class="extra-visual">
+                <p class="extra-label">Extra</p>
+              <figure class="continuity-visual">
+                <svg viewBox="0 0 900 180" role="img" aria-labelledby="continuity-title continuity-description">
+                  <title id="continuity-title">Conservation of neurons in voltage space</title>
+                  <desc id="continuity-description">Heterogeneous neurons move along the voltage axis. They slow down and accumulate in the central region, accelerate outside it, and some quiescent neurons remain at rest.</desc>
+                  <defs>
+                    <clipPath id="continuity-track-clip"><rect x="54" y="34" width="792" height="100" rx="4"></rect></clipPath>
+                    <marker id="continuity-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                      <path d="M 0 0 L 10 5 L 0 10 z"></path>
+                    </marker>
+                  </defs>
+                  <rect class="continuity-window" x="330" y="38" width="240" height="92" rx="4"></rect>
+                  <line class="continuity-boundary" x1="330" y1="38" x2="330" y2="130"></line>
+                  <line class="continuity-boundary" x1="570" y1="38" x2="570" y2="130"></line>
+                  <text class="continuity-label" x="450" y="24" text-anchor="middle">fixed interval [V₁, V₂]</text>
+                  <text class="continuity-label" x="310" y="154" text-anchor="end">inflow</text>
+                  <text class="continuity-label" x="590" y="154">outflow</text>
+                  <line class="continuity-axis" x1="54" y1="105" x2="846" y2="105" marker-end="url(#continuity-arrow)"></line>
+                  <text class="continuity-axis-title" x="866" y="99">V</text>
+                  <text class="continuity-speed-label" x="118" y="57" text-anchor="middle">fast</text>
+                  <text class="continuity-speed-label" x="450" y="57" text-anchor="middle">slow / rest</text>
+                  <text class="continuity-speed-label" x="790" y="57" text-anchor="middle">fast</text>
+                  <g id="continuity-particles" clip-path="url(#continuity-track-clip)"></g>
+                </svg>
+                <div class="continuity-mini-legend" aria-label="Continuity animation legend">
+                  <span><i class="continuity-legend-dot neuron" aria-hidden="true"></i>state <span class="tex-inline" data-tex="V_j">Vj</span> of neuron <span class="tex-inline" data-tex="j">j</span></span>
+                  <span><i class="continuity-legend-dot resting" aria-hidden="true"></i>quiescent neuron at rest</span>
+                </div>
+                <figcaption>Neurons accumulate where motion is slow and spread out where it is fast; every change inside the interval is accounted for by boundary flux.</figcaption>
+              </figure>
+              </aside>
+            </section>
+
+          </div>
+        </div>
+
+        <a class="next-slide" href="#results" aria-label="Go to results">
+          <span aria-hidden="true">↓</span>
+        </a>
+      </section>
+
+      <section class="slide results" id="results" aria-label="Results slide">
+        <div class="slide-content">
+          <p class="kicker">III. Results</p>
+          <h2 id="results-title">Results</h2>
+          <p>
+                The continuity equation (4) without temporal forcing
+                <span class="tex-inline" data-tex="I(t)=0">I(t) = 0</span> has a
+                trivial stationary solution. For each value of
+                <span class="tex-inline" data-tex="\eta">η</span>, this solution has
+                the form of a Lorentzian function:
+                <span class="tex-inline" data-tex="\rho_0(V\mid\eta)\propto(V^2+\eta+Js)^{-1}">ρ₀(V|η) ∝ (V² + η + Js)⁻¹</span>.
+                Physically, the Lorentzian density means that firing neurons with
+                the same <span class="tex-inline" data-tex="\eta">η</span> value will
+                be scattered with a density inversely proportional to their speed
+                [Eq. (1)]; i.e., they will accumulate at slow places and thin out
+                at fast places on the <span class="tex-inline" data-tex="V">V</span>
+                axis. In addition, for those <span class="tex-inline" data-tex="\eta">η</span>
+                values corresponding to quiescent neurons, the density
+                <span class="tex-inline" data-tex="\rho_0">ρ₀</span> collapses at the
+                rest state in the form of a Dirac delta function.
+          </p>
+
+          <aside class="extra-visual">
+            <p class="extra-label">Extra</p>
+          <figure class="density-speed-visual">
+                <svg
+                  id="density-speed-chart"
+                  viewBox="0 0 900 370"
+                  role="img"
+                  aria-labelledby="density-speed-title density-speed-description"
+                >
+                  <title id="density-speed-title">Inverse relationship between neuronal speed and stationary voltage density</title>
+                  <desc id="density-speed-description">The speed is smallest near the center of the voltage axis, while the Lorentzian density peaks there. At fast voltage values the density becomes thin.</desc>
+                  <g id="density-speed-grid"></g>
+                  <path id="speed-path" class="speed-path"></path>
+                  <path id="density-fill" class="density-fill"></path>
+                  <path id="density-path" class="density-path"></path>
+                  <g id="density-neuron-dots"></g>
+                  <text class="density-axis-label" x="23" y="91" text-anchor="middle" transform="rotate(-90 23 91)">speed |V̇|</text>
+                  <text class="density-axis-label" x="23" y="252" text-anchor="middle" transform="rotate(-90 23 252)">density ρ₀</text>
+                  <text class="density-axis-label" x="450" y="358" text-anchor="middle">voltage V</text>
+                  <text class="density-annotation fast left" x="91" y="40">fast → thin</text>
+                  <text class="density-annotation" x="450" y="151" text-anchor="middle">slow → accumulate</text>
+                  <text class="density-annotation fast right" x="809" y="40" text-anchor="end">fast → thin</text>
+                </svg>
+                <figcaption>For a fixed <span class="tex-inline" data-tex="\eta">η</span>, stationary density is inversely proportional to speed: <span class="tex-inline" data-tex="\rho_0\propto1/|\dot V|">ρ₀ ∝ 1/|V̇|</span>.</figcaption>
+          </figure>
+          </aside>
+
+          <p>
+            Next, we assume that, independently of the initial condition,
+            solutions of Eq. (4) generically converge to a Lorentzian-shaped
+            function, so that all relevant dynamics occur inside that
+            lower-dimensional space. This fact is mathematically expressed by
+            the following LA for the conditional density functions:
+          </p>
+
+          <div class="qif-equation" role="math" aria-label="Rho of V given eta and t equals one over pi times x of eta and t divided by the quantity V minus y of eta and t squared plus x of eta and t squared.">
+            <span
+              class="qif-tex-display"
+              data-tex="\rho(V\mid\eta,t)=\frac{1}{\pi}\,\frac{x(\eta,t)}{[V-y(\eta,t)]^2+x(\eta,t)^2},"
+            >ρ(V|η,t) = (1/π) x(η,t) / ([V − y(η,t)]² + x(η,t)²)</span>
+            <span class="equation-number">(5)</span>
+          </div>
+
+          <p>
+            which is a Lorentzian function with time-dependent half-width
+            <span class="tex-inline" data-tex="x(\eta,t)">x(η,t)</span> and center
+            at <span class="tex-inline" data-tex="y(\eta,t)">y(η,t)</span>. In the
+            following, we assume that the LA Eq. (5) completely describes the
+            macroscopic dynamics of the network of QIF neurons and postpone the
+            mathematical justification of its validity to Sec. III E.
+          </p>
+
+          <section class="results-subsection" aria-labelledby="macroscopic-observables-title">
+            <h3 id="macroscopic-observables-title"><span>A.</span> Macroscopic observables: Firing rate and mean membrane potential</h3>
+
+            <p>
+              The half-width <span class="tex-inline" data-tex="x(\eta,t)">x(η,t)</span>
+              of the LA has a particularly simple relation with the firing rate
+              of the neuronal population (i.e., the number of spikes per unit
+              time). Indeed, the firing rate for each
+              <span class="tex-inline" data-tex="\eta">η</span> value at time
+              <span class="tex-inline" data-tex="t">t</span>,
+              <span class="tex-inline" data-tex="r(\eta,t)">r(η,t)</span>, can be
+              computed by noting that neurons fire at a rate given by the
+              probability flux at infinity:
+              <span class="tex-inline firing-flux-inline" data-tex="r(\eta,t)=\rho(V\to\infty\mid\eta,t)\,\dot V(V\to\infty\mid\eta,t)">r(η,t) = ρ(V → ∞|η,t)V̇(V → ∞|η,t)</span>.
+              The limit <span class="tex-inline" data-tex="V\to\infty">V → ∞</span>
+              on the right-hand side of this equation can be evaluated within
+              the LA, and gives the simple identity
+            </p>
+
+            <aside class="extra-derivation" aria-labelledby="firing-limit-title">
+              <p class="extra-label" id="firing-limit-title">Extra</p>
+              <div class="extra-equation" role="math" aria-label="Derivation of the firing rate limit at infinite voltage.">
+                <span
+                  class="qif-tex-display"
+                  data-tex="\begin{aligned}r(\eta,t)&amp;=\lim_{V\to\infty}\rho(V\mid\eta,t)\,\dot V\\[0.25em]&amp;=\frac{x(\eta,t)}{\pi}\lim_{V\to\infty}\frac{V^2+\eta+Js+I}{[V-y(\eta,t)]^2+x(\eta,t)^2}\\[0.25em]&amp;=\frac{x(\eta,t)}{\pi}\lim_{V\to\infty}\frac{1+(\eta+Js+I)/V^2}{[1-y(\eta,t)/V]^2+x(\eta,t)^2/V^2}\\[0.25em]&amp;=\frac{x(\eta,t)}{\pi}.\end{aligned}"
+                >r(η,t) = lim ρ(V|η,t)V̇ = x(η,t)/π</span>
+              </div>
+              <p class="extra-note">At large <span class="tex-inline" data-tex="V">V</span>, both the QIF velocity and the denominator of the Lorentzian grow as <span class="tex-inline" data-tex="V^2">V²</span>, so their ratio tends to one.</p>
+            </aside>
+
+            <div class="qif-equation" role="math" aria-label="x of eta and t equals pi times r of eta and t.">
+              <span
+                class="qif-tex-display"
+                data-tex="x(\eta,t)=\pi r(\eta,t)."
+              >x(η,t) = πr(η,t).</span>
+              <span class="equation-number">(6)</span>
+            </div>
+
+            <p>The (total) firing rate <span class="tex-inline" data-tex="r(t)">r(t)</span> is then</p>
+
+            <div class="qif-equation" role="math" aria-label="r of t equals one over pi times the integral from minus infinity to infinity of x of eta and t times g of eta d eta.">
+              <span
+                class="qif-tex-display"
+                data-tex="r(t)=\frac{1}{\pi}\int_{-\infty}^{\infty}x(\eta,t)g(\eta)\,d\eta."
+              >r(t) = (1/π) ∫ x(η,t)g(η)dη.</span>
+              <span class="equation-number">(7)</span>
+            </div>
+
+            <p>
+              Additionally, the quantity
+              <span class="tex-inline" data-tex="y(\eta,t)">y(η,t)</span> is, for
+              each value of <span class="tex-inline" data-tex="\eta">η</span>, the
+              mean of the membrane potential:
+            </p>
+
+            <div class="qif-equation" role="math" aria-label="y of eta and t equals the Cauchy principal value integral from minus infinity to infinity of rho of V given eta and t times V d V.">
+              <span
+                class="qif-tex-display"
+                data-tex="y(\eta,t)=\operatorname{p.v.}\!\int_{-\infty}^{\infty}\rho(V\mid\eta,t)V\,dV."
+              >y(η,t) = p.v. ∫ ρ(V|η,t)VdV.</span>
+              <span class="equation-number">(8)</span>
+            </div>
+
+            <p>
+              Here, we take the Cauchy principal value, defined as
+            </p>
+
+            <div class="qif-equation qif-equation-long" role="math" aria-label="The Cauchy principal value integral from minus infinity to infinity of f of x d x equals the limit as R tends to infinity of the integral from minus R to R of f of x d x.">
+              <span
+                class="qif-tex-display"
+                data-tex="\operatorname{p.v.}\!\int_{-\infty}^{\infty}f(x)\,dx=\lim_{R\to\infty}\int_{-R}^{R}f(x)\,dx,"
+              >p.v. ∫ f(x)dx = lim ∫ f(x)dx,</span>
+            </div>
+
+            <p>
+              to avoid the otherwise ill-defined integral. The mean membrane
+              potential is then
+            </p>
+
+            <div class="qif-equation" role="math" aria-label="v of t equals the integral from minus infinity to infinity of y of eta and t times g of eta d eta.">
+              <span
+                class="qif-tex-display"
+                data-tex="v(t)=\int_{-\infty}^{\infty}y(\eta,t)g(\eta)\,d\eta."
+              >v(t) = ∫ y(η,t)g(η)dη.</span>
+              <span class="equation-number">(9)</span>
+            </div>
+          </section>
+
+          <section class="results-subsection" aria-labelledby="firing-rate-equations-title">
+            <h3 id="firing-rate-equations-title"><span>B.</span> Firing-rate equations</h3>
+
+            <p>
+              Substituting the LA Eq. (5) into the continuity equation (4), we
+              find that, for each value of
+              <span class="tex-inline" data-tex="\eta">η</span>, variables
+              <span class="tex-inline" data-tex="x">x</span> and
+              <span class="tex-inline" data-tex="y">y</span> must obey two coupled
+              equations, which can be written in complex form as
+            </p>
+
+            <div class="qif-equation qif-equation-long" role="math" aria-label="Partial derivative of w of eta and t with respect to time equals i times eta plus J s of t minus w of eta and t squared plus I of t.">
+              <span
+                class="qif-tex-display"
+                data-tex="\partial_t w(\eta,t)=i\left[\eta+Js(t)-w(\eta,t)^2+I(t)\right],"
+              >∂ₜw(η,t) = i[η + Js(t) − w(η,t)² + I(t)],</span>
+              <span class="equation-number">(10)</span>
+            </div>
+
+            <p>
+              where <span class="tex-inline" data-tex="w(\eta,t)\equiv x(\eta,t)+iy(\eta,t)">w(η,t) ≡ x(η,t) + iy(η,t)</span>.
+              Closing this equation requires expressing the mean synaptic
+              activation <span class="tex-inline" data-tex="s(t)">s(t)</span> as
+              a function of <span class="tex-inline" data-tex="w(\eta,t)">w(η,t)</span>.
+              The simplest choice is to take the limit of infinitely fast
+              synapses, <span class="tex-inline" data-tex="\tau\to0">τ → 0</span>
+              in Eq. (3), so that we get an equality with the firing rate
+              <span class="tex-inline" data-tex="s(t)=r(t)">s(t) = r(t)</span>.
+              This allows for the system of QIF neurons [Eqs. (1)–(3)] to be
+              exactly described by Eqs. (10) and (7), an infinite set of
+              integro-differential equations if
+              <span class="tex-inline" data-tex="g(\eta)">g(η)</span> is a
+              continuous distribution.
+            </p>
+
+            <aside class="extra-derivation" aria-labelledby="finite-synapses-title">
+              <p class="extra-label" id="finite-synapses-title">Extra</p>
+              <p class="extra-note">
+                The identification <span class="tex-inline" data-tex="s(t)=r(t)">s(t) = r(t)</span>
+                is a convenient instantaneous-synapse limit, not a requirement
+                of the Lorentzian ansatz. For the exponential synaptic kernel
+                introduced after Eq. (3), a finite synaptic time constant can
+                instead be retained exactly through
+              </p>
+              <div class="extra-equation" role="math" aria-label="tau times the time derivative of s equals minus s plus r.">
+                <span
+                  class="qif-tex-display"
+                  data-tex="\tau\dot s(t)=-s(t)+r(t)."
+                >τṡ(t) = −s(t) + r(t).</span>
+              </div>
+              <p class="extra-note">
+                Once the heterogeneity integral is reduced to the two
+                macroscopic observables <span class="tex-inline" data-tex="r">r</span>
+                and <span class="tex-inline" data-tex="v">v</span>, keeping this
+                equation gives a three-dimensional system
+                <span class="tex-inline" data-tex="(r,v,s)">(r, v, s)</span>.
+                Thus, <span class="tex-inline" data-tex="s=r">s = r</span> enables
+                a two-dimensional phase-plane description, whereas finite
+                <span class="tex-inline" data-tex="\tau">τ</span> adds realistic
+                synaptic kinetics without abandoning the exact mean-field
+                reduction, subject to the same thermodynamic-limit and
+                Lorentzian-ansatz assumptions.
+              </p>
+            </aside>
+
+            <p>
+              Equation (10) is useful for general distributions
+              <span class="tex-inline" data-tex="g(\eta)">g(η)</span> (see
+              Appendix B), but a particularly sharp reduction in dimensionality
+              is achieved if <span class="tex-inline" data-tex="\eta">η</span> is
+              distributed according to a Lorentzian distribution of half-width
+              <span class="tex-inline" data-tex="\Delta">Δ</span> centered at
+              <span class="tex-inline" data-tex="\bar\eta">η̄</span>:
+            </p>
+
+            <div class="qif-equation" role="math" aria-label="g of eta equals one over pi times Delta divided by eta minus eta bar squared plus Delta squared.">
+              <span
+                class="qif-tex-display"
+                data-tex="g(\eta)=\frac{1}{\pi}\,\frac{\Delta}{(\eta-\bar\eta)^2+\Delta^2}."
+              >g(η) = (1/π) Δ / ((η − η̄)² + Δ²).</span>
+              <span class="equation-number">(11)</span>
+            </div>
+
+            <aside class="extra-visual">
+              <p class="extra-label">Extra</p>
+            <figure class="heterogeneity-visual" id="heterogeneity-visual">
+              <div class="heterogeneity-controls" aria-label="Lorentzian distribution parameters">
+                <label for="heterogeneity-mean">
+                  <span>
+                    <span>Center <span class="tex-inline" data-tex="\bar\eta">η̄</span></span>
+                    <output id="heterogeneity-mean-value" for="heterogeneity-mean">0.00</output>
+                  </span>
+                  <input id="heterogeneity-mean" type="range" min="-3" max="3" step="0.1" value="0" />
+                </label>
+                <label for="heterogeneity-delta">
+                  <span>
+                    <span>Half-width <span class="tex-inline" data-tex="\Delta">Δ</span></span>
+                    <output id="heterogeneity-delta-value" for="heterogeneity-delta">1.00</output>
+                  </span>
+                  <input id="heterogeneity-delta" type="range" min="0.25" max="2.5" step="0.05" value="1" />
+                </label>
+              </div>
+
+              <svg
+                id="heterogeneity-chart"
+                viewBox="0 0 900 350"
+                role="img"
+                aria-labelledby="heterogeneity-chart-title heterogeneity-chart-description"
+              >
+                <title id="heterogeneity-chart-title">Lorentzian distribution of neuronal heterogeneity</title>
+                <desc id="heterogeneity-chart-description">Changing eta bar moves the center of the distribution. Changing Delta controls its half-width and peak height while the total area remains one.</desc>
+                <g id="heterogeneity-grid"></g>
+                <path id="heterogeneity-fill" class="heterogeneity-fill"></path>
+                <path id="heterogeneity-path" class="heterogeneity-path"></path>
+                <line id="heterogeneity-center-line" class="heterogeneity-guide center"></line>
+                <line id="heterogeneity-width-line" class="heterogeneity-guide width"></line>
+                <circle id="heterogeneity-width-start" class="heterogeneity-guide-dot" r="4"></circle>
+                <circle id="heterogeneity-width-end" class="heterogeneity-guide-dot" r="4"></circle>
+                <text id="heterogeneity-center-label" class="heterogeneity-direct-label"></text>
+                <text id="heterogeneity-width-label" class="heterogeneity-direct-label"></text>
+                <text class="heterogeneity-axis-label" x="450" y="340" text-anchor="middle">heterogeneity η</text>
+                <text class="heterogeneity-axis-label" x="20" y="165" text-anchor="middle" transform="rotate(-90 20 165)">density g(η)</text>
+              </svg>
+              <figcaption>Move <span class="tex-inline" data-tex="\bar\eta">η̄</span> to shift the population center. Increasing <span class="tex-inline" data-tex="\Delta">Δ</span> makes the population more heterogeneous: the distribution widens and its peak falls, while its total area remains one.</figcaption>
+            </figure>
+            </aside>
+
+            <p>
+              Note that this distribution accounts for the quenched variability
+              in the external inputs. The fact that it is Lorentzian is unrelated
+              to the LA for the density of membrane potentials.
+            </p>
+
+            <aside class="extra-derivation" aria-labelledby="quenched-heterogeneity-title">
+              <p class="extra-label" id="quenched-heterogeneity-title">Extra</p>
+              <p class="extra-note">
+                The distribution <span class="tex-inline" data-tex="g(\eta)">g(η)</span>
+                describes heterogeneity that is fixed in time: each neuron keeps
+                its own value of <span class="tex-inline" data-tex="\eta">η</span>.
+                Extensions including time-dependent heterogeneity were studied
+                in papers published after this work.
+              </p>
+            </aside>
+
+            <p>
+              Assuming Eq. (11), the integrals in Eqs. (7) and (9) can be
+              evaluated by closing the integration contour in the complex
+              <span class="tex-inline" data-tex="\eta">η</span> plane and using
+              the residue theorem [41]. Notably, the firing rate and the mean
+              membrane potential only depend on the value of
+              <span class="tex-inline" data-tex="w">w</span> at the pole of
+              <span class="tex-inline" data-tex="g(\eta)">g(η)</span> in the
+              lower half of the complex
+              <span class="tex-inline" data-tex="\eta">η</span> plane:
+            </p>
+
+            <div class="qif-equation qif-equation-centered" role="math" aria-label="pi times r of t plus i times v of t equals w evaluated at eta bar minus i Delta and t.">
+              <span
+                class="qif-tex-display"
+                data-tex="\pi r(t)+iv(t)=w(\bar\eta-i\Delta,t)."
+              >πr(t) + iv(t) = w(η̄ − iΔ,t).</span>
+            </div>
+
+            <aside class="extra-visual">
+              <p class="extra-label">Extra</p>
+            <figure class="complex-contour-visual">
+              <div class="complex-contour-layout">
+                <svg
+                  id="complex-contour-chart"
+                  viewBox="0 0 900 420"
+                  role="img"
+                  aria-labelledby="complex-contour-title complex-contour-description"
+                >
+                  <title id="complex-contour-title">Integration contour and poles in the complex eta plane</title>
+                  <desc id="complex-contour-description">The contour follows the real eta axis and closes through the lower half-plane. It contains the pole eta bar minus i Delta, while the conjugate pole eta bar plus i Delta lies outside.</desc>
+                  <defs>
+                    <marker id="complex-contour-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                      <path d="M 0 0 L 10 5 L 0 10 z"></path>
+                    </marker>
+                  </defs>
+                  <g id="complex-contour-grid"></g>
+                  <path id="complex-contour-real" class="complex-contour-path"></path>
+                  <path id="complex-contour-arc" class="complex-contour-path"></path>
+                  <circle id="complex-pole-lower" class="complex-pole lower" r="7"></circle>
+                  <circle id="complex-pole-upper" class="complex-pole upper" r="7"></circle>
+                  <text id="complex-pole-lower-label" class="complex-direct-label"></text>
+                  <text id="complex-pole-upper-label" class="complex-direct-label muted"></text>
+                  <text class="complex-contour-label" x="656" y="321">close in lower half-plane</text>
+                  <text class="complex-axis-label" x="862" y="196" text-anchor="end">Re η</text>
+                  <text class="complex-axis-label" x="466" y="30">Im η</text>
+                </svg>
+
+                <div class="complex-contour-controls" aria-label="Complex plane pole parameters">
+                  <label for="complex-contour-mean">
+                    <span>
+                      <span>Center <span class="tex-inline" data-tex="\bar\eta">η̄</span></span>
+                      <output id="complex-contour-mean-value" for="complex-contour-mean">0.00</output>
+                    </span>
+                    <input id="complex-contour-mean" type="range" min="-3" max="3" step="0.1" value="0" />
+                  </label>
+                  <label for="complex-contour-delta">
+                    <span>
+                      <span>Distance <span class="tex-inline" data-tex="\Delta">Δ</span></span>
+                      <output id="complex-contour-delta-value" for="complex-contour-delta">1.00</output>
+                    </span>
+                    <input id="complex-contour-delta" type="range" min="0.25" max="2.5" step="0.05" value="1" />
+                  </label>
+                </div>
+              </div>
+              <figcaption>The clockwise contour encloses only <span class="tex-inline" data-tex="\bar\eta-i\Delta">η̄ − iΔ</span>. These controls affect only the complex-plane diagram.</figcaption>
+            </figure>
+            </aside>
+
+            <p>
+              As a result, we only need to evaluate Eq. (10) at
+              <span class="tex-inline" data-tex="\eta=\bar\eta-i\Delta">η = η̄ − iΔ</span>,
+              and thereby obtain a system of FREs composed of two ordinary
+              differential equations:
+            </p>
+
+            <div class="qif-equation" role="math" aria-label="r dot equals Delta over pi plus two r v.">
+              <span
+                class="qif-tex-display"
+                data-tex="\dot r=\frac{\Delta}{\pi}+2rv,"
+              >ṙ = Δ/π + 2rv,</span>
+              <span class="equation-number">(12a)</span>
+            </div>
+
+            <div class="qif-equation" role="math" aria-label="v dot equals v squared plus eta bar plus J r plus I of t minus pi squared r squared.">
+              <span
+                class="qif-tex-display"
+                data-tex="\dot v=v^2+\bar\eta+Jr+I(t)-\pi^2r^2."
+              >v̇ = v² + η̄ + Jr + I(t) − π²r².</span>
+              <span class="equation-number">(12b)</span>
+            </div>
+
+            <p>
+              This nonlinear system describes the macroscopic dynamics of the
+              population of QIF neurons in terms of the population firing rate
+              <span class="tex-inline" data-tex="r">r</span> and mean membrane
+              potential <span class="tex-inline" data-tex="v">v</span>.
+            </p>
+
+            <p>
+              It is enlightening to compare the mean-field model Eq. (12) with
+              the equations of the spiking neurons. Note that Eq. (12b)
+              resembles Eqs. (1) and (2) for the individual QIF neuron, but
+              without spike resetting. Indeed, the macroscopic firing-rate
+              variable <span class="tex-inline" data-tex="r">r</span> enters as
+              the negative feedback term
+              <span class="tex-inline" data-tex="-\pi^2r^2">−π²r²</span> in
+              Eq. (12b), impeding the explosive growth of the mean membrane
+              potential <span class="tex-inline" data-tex="v">v</span>.
+            </p>
+
+            <p>
+              This negative feedback, combined with the coupling term
+              <span class="tex-inline" data-tex="2rv">2rv</span> on the
+              right-hand side of Eq. (12a), describes the effective interaction
+              between the firing rate and mean membrane potential at the
+              network level. Therefore, the FREs (12) describe the effect of
+              the single-cell spike-generation and reset mechanism at the
+              network level.
+            </p>
+
+            <p>
+              In the following, we examine the dynamics described by Eq. (12)
+              and show that they fully reproduce the macroscopic dynamics of
+              the network of QIF neurons, even during episodes of strong spike
+              synchrony.
+            </p>
+          </section>
+
+          <section class="results-subsection" aria-labelledby="fre-analysis-title">
+            <h3 id="fre-analysis-title"><span>C.</span> Analysis of the firing-rate equations</h3>
+
+            <p>
+              To begin with the analysis of Eq. (12), we first note that in the
+              absence of forcing,
+              <span class="tex-inline" data-tex="I(t)=0">I(t) = 0</span>, the only
+              attractors of Eq. (12) are fixed points. Figure 1(a) shows a phase
+              diagram of the system as a function of the mean external drive
+              <span class="tex-inline" data-tex="\bar\eta">η̄</span> and synaptic
+              weight <span class="tex-inline" data-tex="J">J</span>, both
+              normalized by the width of the input distribution [42]. There are
+              three qualitatively distinct regions of the phase diagram:
+              (1) a single stable node corresponding to a low-activity state
+              (white), (2) a single stable focus (spiral) generally
+              corresponding to a high-activity state (gray), and (3) a region
+              of bistability between low and high firing rate [cyan; see a
+              phase portrait of this region in Fig. 1(d)]. Comparison of a
+              sample bifurcation diagram of the fixed points from numerical
+              simulations of networks of QIF neurons with that obtained from
+              the FREs (12) shows an excellent correspondence; see Figs. 1(b)
+              and 1(c).
+            </p>
+
+            <figure class="paper-figure">
+              <img
+                src="fig1.png"
+                alt="Figure 1 with the phase diagram, firing-rate and mean-voltage bifurcation diagrams, and a phase portrait in the bistable region."
+                loading="lazy"
+              />
+              <figcaption>
+                <strong>Analysis of the steady states of FREs (12).</strong>
+                <span><strong>(a)</strong> Phase diagram: In the wedge-shaped cyan-shaded region there is bistability between a high- and a low-activity state. The boundary of the bistability region is the locus of a saddle-node bifurcation, which is exactly obtained in parametric form:
+                  <span class="tex-inline paper-caption-equation" data-tex="(\bar\eta,J)_{\mathrm{SN}}=\left[-\pi^2r^2-\frac{3\Delta^2}{(2\pi r)^2},\,2\pi^2r+\frac{\Delta^2}{2\pi^2r^3}\right]">(η̄,J)SN = [−π²r² − 3Δ²/(2πr)², 2π²r + Δ²/(2π²r³)]</span>.
+                  To the right of the dashed line, defined by
+                  <span class="tex-inline" data-tex="\bar\eta_f=-\left(\frac{J}{2\pi}\right)^2-\left(\frac{\pi\Delta}{J}\right)^2">η̄f = −[J/(2π)]² − (πΔ/J)²</span>,
+                  there is a stable focus (shaded regions).
+                </span>
+                <span><strong>(b)</strong> <span class="tex-inline" data-tex="r-\bar\eta">r − η̄</span> and <strong>(c)</strong> <span class="tex-inline" data-tex="v-\bar\eta">v − η̄</span> bifurcation diagrams for <span class="tex-inline" data-tex="J/\Delta^{1/2}=15">J/Δ¹ᐟ² = 15</span>. Square symbols show results obtained from numerical simulations of QIF neurons (see Appendix A for details).</span>
+                <span><strong>(d)</strong> Phase portrait in the bistable region [<span class="tex-inline" data-tex="\bar\eta/\Delta=-5">η̄/Δ = −5</span>, <span class="tex-inline" data-tex="J/\Delta^{1/2}=15">J/Δ¹ᐟ² = 15</span>, triangle in (a)] with three fixed points: a stable focus (with its basin of attraction shaded), a stable node, and a saddle point.</span>
+              </figcaption>
+            </figure>
+
+            <aside class="fre-regime-extra" aria-labelledby="fre-regime-extra-title">
+              <p class="extra-label" id="fre-regime-extra-title">Extra · What the three regions mean dynamically</p>
+              <p class="fre-regime-intro">
+                The arrows show the flow generated by Eqs. (12). The gray and
+                amber dashed curves are the
+                <span class="tex-inline" data-tex="\dot r=0">ṙ = 0</span> and
+                <span class="tex-inline" data-tex="\dot v=0">v̇ = 0</span>
+                nullclines; their intersections are fixed points.
+              </p>
+
+              <div class="fre-regime-grid">
+                <article class="fre-regime-card">
+                  <div class="fre-regime-card-header">
+                    <span>White region</span>
+                    <h4>Single stable node</h4>
+                  </div>
+                  <div class="fre-regime-plot">
+                    <img
+                      class="fre-regime-gif"
+                      src="assets/fre-stable-node-poster.png"
+                      data-poster="assets/fre-stable-node-poster.png"
+                      data-gif="assets/fre-stable-node.gif"
+                      alt="Phase-plane trajectories converging directly to a low-activity stable node. Horizontal axis: firing rate r. Vertical axis: mean membrane potential v."
+                      loading="lazy"
+                    />
+                    <span class="fre-axis-label x"><i>r</i></span>
+                    <span class="fre-axis-label y"><i>v</i></span>
+                  </div>
+                  <p>
+                    Every initial condition approaches the same low-rate fixed
+                    point. The approach is direct rather than rotational, so
+                    perturbations decay without damped population oscillations.
+                    Shown for <span class="tex-inline" data-tex="\bar\eta=-5">η̄ = −5</span>
+                    and <span class="tex-inline" data-tex="J=5">J = 5</span>.
+                  </p>
+                </article>
+
+                <article class="fre-regime-card">
+                  <div class="fre-regime-card-header">
+                    <span>Gray region</span>
+                    <h4>Single stable focus</h4>
+                  </div>
+                  <div class="fre-regime-plot">
+                    <img
+                      class="fre-regime-gif"
+                      src="assets/fre-stable-focus-poster.png"
+                      data-poster="assets/fre-stable-focus-poster.png"
+                      data-gif="assets/fre-stable-focus.gif"
+                      alt="Phase-plane trajectories spiraling toward a high-activity stable focus. Horizontal axis: firing rate r. Vertical axis: mean membrane potential v."
+                      loading="lazy"
+                    />
+                    <span class="fre-axis-label x"><i>r</i></span>
+                    <span class="fre-axis-label y"><i>v</i></span>
+                  </div>
+                  <p>
+                    Trajectories spiral toward one high-rate fixed point. Thus,
+                    <span class="tex-inline" data-tex="r(t)">r(t)</span> and
+                    <span class="tex-inline" data-tex="v(t)">v(t)</span> show
+                    damped oscillations after a perturbation, but the attractor
+                    itself is stationary—not a limit cycle. Shown for
+                    <span class="tex-inline" data-tex="\bar\eta=-2">η̄ = −2</span>
+                    and <span class="tex-inline" data-tex="J=10">J = 10</span>.
+                  </p>
+                </article>
+
+                <article class="fre-regime-card">
+                  <div class="fre-regime-card-header">
+                    <span>Cyan region</span>
+                    <h4>Bistability</h4>
+                  </div>
+                  <div class="fre-regime-plot">
+                    <img
+                      class="fre-regime-gif"
+                      src="assets/fre-bistability-poster.png"
+                      data-poster="assets/fre-bistability-poster.png"
+                      data-gif="assets/fre-bistability.gif"
+                      alt="Phase-plane trajectories reaching either a low stable node or a high stable focus, separated by a saddle. Horizontal axis: firing rate r. Vertical axis: mean membrane potential v."
+                      loading="lazy"
+                    />
+                    <span class="fre-axis-label x"><i>r</i></span>
+                    <span class="fre-axis-label y"><i>v</i></span>
+                  </div>
+                  <p>
+                    A low-activity node and a high-activity focus coexist. The
+                    saddle between them separates their basins, so the final
+                    state depends on the initial condition or on whether a
+                    perturbation pushes the network across that boundary. Shown
+                    for <span class="tex-inline" data-tex="\bar\eta=-5">η̄ = −5</span>
+                    and <span class="tex-inline" data-tex="J=15">J = 15</span>.
+                  </p>
+                </article>
+              </div>
+            </aside>
+
+            <p>
+              A similar phase diagram can be readily reproduced by traditional
+              heuristic firing-rate models, with one significant qualitative
+              difference: the presence of a stable focus—and hence, damped
+              oscillations. Specifically, in the gray region of the phase
+              diagram in Fig. 1(a), the system undergoes oscillatory decay to
+              the stable fixed point. This oscillatory decay also occurs for
+              the high-activity state over a large part of the bistability
+              region (cyan); see, for example, Fig. 1(d).
+            </p>
+
+            <aside class="extra-visual">
+              <p class="extra-label">Extra</p>
+            <figure class="phase-decay-comparison">
+              <div class="phase-decay-grid">
+                <article class="phase-decay-card">
+                  <div class="phase-decay-card-header">
+                    <span>Traditional rate model · schematic</span>
+                    <h4>Stable node</h4>
+                  </div>
+                  <div class="phase-decay-plot">
+                    <img
+                      src="assets/phase-heuristic-node-poster.png"
+                      data-poster="assets/phase-heuristic-node-poster.png"
+                      data-gif="assets/phase-heuristic-node.gif"
+                      alt="Schematic traditional firing-rate trajectory approaching a stable node without spiraling, alongside a firing rate that relaxes monotonically in time."
+                      loading="lazy"
+                    />
+                    <span class="phase-decay-axis phase-r"><i>r</i></span>
+                    <span class="phase-decay-axis phase-v"><i>v</i></span>
+                    <span class="phase-decay-axis time-t"><i>t</i></span>
+                    <span class="phase-decay-axis time-r"><i>r</i>(<i>t</i>)</span>
+                  </div>
+                  <p>
+                    The trajectory approaches the fixed point directly. The
+                    corresponding rate relaxes smoothly, without repeatedly
+                    crossing its stationary value. This panel is schematic
+                    because no particular heuristic model is specified.
+                  </p>
+                </article>
+
+                <article class="phase-decay-card">
+                  <div class="phase-decay-card-header">
+                    <span>Gray region · FREs</span>
+                    <h4>Stable focus</h4>
+                  </div>
+                  <div class="phase-decay-plot">
+                    <img
+                      src="assets/phase-gray-focus-poster.png"
+                      data-poster="assets/phase-gray-focus-poster.png"
+                      data-gif="assets/phase-gray-focus.gif"
+                      alt="Trajectory in the gray region spiraling toward a stable focus, alongside a firing rate with damped temporal oscillations."
+                      loading="lazy"
+                    />
+                    <span class="phase-decay-axis phase-r"><i>r</i></span>
+                    <span class="phase-decay-axis phase-v"><i>v</i></span>
+                    <span class="phase-decay-axis time-t"><i>t</i></span>
+                    <span class="phase-decay-axis time-r"><i>r</i>(<i>t</i>)</span>
+                  </div>
+                  <p>
+                    The trajectory spirals around the stable fixed point.
+                    Therefore, <span class="tex-inline" data-tex="r(t)">r(t)</span>
+                    passes above and below its stationary value with a
+                    progressively smaller amplitude: an oscillatory decay, not
+                    a sustained oscillation. The same oscillatory decay occurs
+                    around the high-activity focus over a large part of the
+                    cyan bistability region.
+                  </p>
+                </article>
+              </div>
+              <figcaption>
+                Left half of each panel: trajectory in the
+                <span class="tex-inline" data-tex="(r,v)">(r, v)</span> phase
+                plane. Right half: the same relaxation viewed as
+                <span class="tex-inline" data-tex="r(t)">r(t)</span>. A spiral
+                in phase space appears as damped temporal oscillations.
+              </figcaption>
+            </figure>
+            </aside>
+
+            <p>
+              The presence of damped oscillations at the macroscopic level
+              reflects the transient synchronous firing of a fraction of the
+              neurons in the ensemble. This behavior is common in spiking
+              neuron models with weak noise and is not captured by traditional
+              firing-rate models (see, e.g., Ref. [20]).
+            </p>
+
+            <aside class="extra-visual">
+              <p class="extra-label">Extra</p>
+            <figure class="synchrony-comparison">
+              <div class="synchrony-grid">
+                <article class="synchrony-card">
+                  <div class="synchrony-card-header">
+                    <span>Spiking-network behavior</span>
+                    <h4>Transient synchrony</h4>
+                  </div>
+                  <div class="synchrony-plot">
+                    <img
+                      src="assets/transient-synchrony-poster.png"
+                      data-poster="assets/transient-synchrony-poster.png"
+                      data-gif="assets/transient-synchrony.gif"
+                      alt="Population firing rate with damped peaks above a raster plot containing transient vertical bands of synchronized spikes."
+                      loading="lazy"
+                    />
+                    <span class="synchrony-axis rate"><i>r</i>(<i>t</i>)</span>
+                    <span class="synchrony-axis neurons">neuron <i>j</i></span>
+                    <span class="synchrony-axis time"><i>t</i></span>
+                  </div>
+                  <p>
+                    Vertical bands in the raster indicate that many neurons
+                    fire nearly together. Their collective bursts generate the
+                    peaks in <span class="tex-inline" data-tex="r(t)">r(t)</span>;
+                    as synchrony fades, the oscillations are damped.
+                  </p>
+                </article>
+
+                <article class="synchrony-card">
+                  <div class="synchrony-card-header">
+                    <span>Asynchronous network state</span>
+                    <h4>Asynchronous activity</h4>
+                  </div>
+                  <div class="synchrony-plot">
+                    <img
+                      src="assets/asynchronous-relaxation-poster.png?v=2"
+                      data-poster="assets/asynchronous-relaxation-poster.png?v=2"
+                      data-gif="assets/asynchronous-relaxation.gif?v=2"
+                      alt="Smoothly relaxing population firing rate above a noise-like raster plot whose spikes are chaotically dispersed without bands or diagonal patterns."
+                      loading="lazy"
+                    />
+                    <span class="synchrony-axis rate"><i>r</i>(<i>t</i>)</span>
+                    <span class="synchrony-axis neurons">neuron <i>j</i></span>
+                    <span class="synchrony-axis time"><i>t</i></span>
+                  </div>
+                  <p>
+                    Individual spike times form a noise-like cloud with no
+                    visible bands, diagonals, or ordering across neurons. After
+                    averaging over the population, this irregular microscopic
+                    activity produces a smooth macroscopic
+                    <span class="tex-inline" data-tex="r(t)">r(t)</span>.
+                  </p>
+                </article>
+              </div>
+              <figcaption>Top: population firing rate. Bottom: spike raster. Synchrony appears as vertical spike bands and produces transient macroscopic oscillations.</figcaption>
+            </figure>
+            </aside>
+          </section>
+
+          <section class="results-subsection" aria-labelledby="nonstationary-inputs-title">
+            <h3 id="nonstationary-inputs-title"><span>D.</span> Analysis of the firing-rate equations: Nonstationary inputs</h3>
+
+            <p>
+              To show that the FREs (12) fully describe the macroscopic
+              response of the population of QIF neurons to time-varying
+              stimuli—up to finite-size effects—we consider two types of
+              stimulus <span class="tex-inline" data-tex="I(t)">I(t)</span>:
+              (1) a step function and (2) a sinusoidal forcing. In both cases,
+              we simulate the full system of QIF neurons and the FREs (12).
+            </p>
+
+            <p>
+              Figure 2 shows the system’s response to the two different inputs.
+              In both cases, the system is initially
+              (<span class="tex-inline" data-tex="t&lt;0">t &lt; 0</span>) in a
+              bistable regime and set in the low-activity state, with parameters
+              corresponding to those of Fig. 1(d). The left-hand panels of
+              Fig. 2 show the response of the system to a step current applied
+              at <span class="tex-inline" data-tex="t=0">t = 0</span>. The
+              applied current is such that the system abandons the bistable
+              region—see Fig. 1(a)—and approaches the high-activity state,
+              which is a stable focus. This is clearly reflected in the time
+              series <span class="tex-inline" data-tex="r(t),v(t)">r(t), v(t)</span>,
+              where the rate equations (12) exactly predict the damped
+              oscillations exhibited by the mean field of the QIF neurons. The
+              raster plot in Fig. 2(e) shows the presence of the oscillations,
+              which is due to the transitory synchronous firing of a large
+              fraction of neurons in the population. Finally, at
+              <span class="tex-inline" data-tex="t=30">t = 30</span>, the
+              current is removed and the system converges—again showing damped
+              oscillations—to the new location of the focus fixed point, which
+              clearly coexists with the stable node where it was originally
+              placed (<span class="tex-inline" data-tex="t&lt;0">t &lt; 0</span>).
+            </p>
+
+            <figure class="paper-figure">
+              <img
+                src="fig2.png"
+                alt="Figure 2 comparing the response of the full QIF network and the firing-rate equations to a step input and a sinusoidal input, including firing rate, mean membrane potential, spike rasters, and the applied stimuli."
+                loading="lazy"
+              />
+              <figcaption class="paper-caption-inline">
+                <strong>The transient dynamics of an ensemble of QIF model neurons [Eqs. (1) and (2)] are exactly described by the FREs (12).</strong>
+                <span><strong>(a),(b)</strong> Instantaneous firing rate and <strong>(c),(d)</strong> mean membrane potential of the QIF neurons and the FREs are depicted in black and orange, respectively. <strong>(e),(f)</strong> Raster plots of 300 randomly selected QIF neurons from the <span class="tex-inline" data-tex="N=10^4">N = 10⁴</span> neurons in the ensemble. <strong>(a),(c),(e),(g)</strong> At time <span class="tex-inline" data-tex="t=0">t = 0</span>, a current <span class="tex-inline" data-tex="I=3">I = 3</span> is applied to all neurons and set to zero again at <span class="tex-inline" data-tex="t=30">t = 30</span>; the stimulus <span class="tex-inline" data-tex="I(t)">I(t)</span> is shown in <strong>(g)</strong>. <strong>(b),(d),(f),(h)</strong> At time <span class="tex-inline" data-tex="t=0">t = 0</span>, a sinusoidal current is applied to all neurons, <span class="tex-inline" data-tex="I(t)=I_0\sin(\omega t)">I(t) = I₀ sin(ωt)</span>, with <span class="tex-inline" data-tex="I_0=3">I₀ = 3</span> and <span class="tex-inline" data-tex="\omega=\pi/20">ω = π/20</span>; the stimulus <span class="tex-inline" data-tex="I(t)">I(t)</span> is shown in <strong>(h)</strong>. Parameters: <span class="tex-inline" data-tex="J=15">J = 15</span>, <span class="tex-inline" data-tex="\bar\eta=-5">η̄ = −5</span>, and <span class="tex-inline" data-tex="\Delta=1">Δ = 1</span>.</span>
+              </figcaption>
+            </figure>
+
+            <aside class="extra-visual finite-size-extra" aria-labelledby="finite-size-title">
+              <p class="extra-label" id="finite-size-title">Extra · Finite-size comparison</p>
+              <p class="finite-size-intro">
+                Simulations of the same response using different population
+                sizes. Only the number of neurons
+                <span class="tex-inline" data-tex="N">N</span> changes between
+                panels.
+              </p>
+
+              <div class="finite-size-grid">
+                <figure class="finite-size-panel">
+                  <figcaption><span class="tex-inline" data-tex="N=500\,000">N = 500,000</span></figcaption>
+                  <img
+                    src="fig_r_v_500000.png"
+                    alt="Firing-rate and mean-voltage simulation with 500,000 neurons."
+                    loading="lazy"
+                  />
+                </figure>
+
+                <figure class="finite-size-panel">
+                  <figcaption><span class="tex-inline" data-tex="N=50\,000">N = 50,000</span></figcaption>
+                  <img
+                    src="fig_r_v_50000.png"
+                    alt="Firing-rate and mean-voltage simulation with 50,000 neurons."
+                    loading="lazy"
+                  />
+                </figure>
+
+                <figure class="finite-size-panel">
+                  <figcaption><span class="tex-inline" data-tex="N=10\,000">N = 10,000</span></figcaption>
+                  <img
+                    src="fig_r_v_10000.png"
+                    alt="Firing-rate and mean-voltage simulation with 10,000 neurons."
+                    loading="lazy"
+                  />
+                </figure>
+
+                <figure class="finite-size-panel">
+                  <figcaption><span class="tex-inline" data-tex="N=5\,000">N = 5,000</span></figcaption>
+                  <img
+                    src="fig_r_v_5000.png"
+                    alt="Firing-rate and mean-voltage simulation with 5,000 neurons."
+                    loading="lazy"
+                  />
+                </figure>
+
+                <figure class="finite-size-panel">
+                  <figcaption><span class="tex-inline" data-tex="N=1\,000">N = 1,000</span></figcaption>
+                  <img
+                    src="fig_r_v_1000.png"
+                    alt="Firing-rate and mean-voltage simulation with 1,000 neurons."
+                    loading="lazy"
+                  />
+                </figure>
+              </div>
+            </aside>
+
+            <aside class="extra-visual coupled-networks-extra" aria-labelledby="coupled-networks-title">
+              <p class="extra-label" id="coupled-networks-title">Extra · A chain of three QIF populations</p>
+              <p class="coupled-networks-intro">
+                The external stimulus is applied only to Population 1. Its
+                synaptic activity becomes the input of Population 2, whose
+                activity then drives Population 3. Each population also retains
+                its own recurrent coupling
+                <span class="tex-inline" data-tex="J s_i">J sᵢ</span>.
+              </p>
+
+              <div class="coupling-architecture-grid is-single">
+                <article class="coupling-architecture-card">
+                  <div class="coupling-card-heading">
+                    <span>3</span>
+                    <div>
+                      <strong>Signal propagation along the chain</strong>
+                      <small>Each population drives only the next one.</small>
+                    </div>
+                  </div>
+
+                  <div class="network-flow network-flow-three" aria-label="External current enters population 1, population 1 drives population 2, and population 2 drives population 3">
+                    <div class="flow-source">
+                      <span>external</span>
+                      <strong><i>I</i><sub>ext</sub></strong>
+                    </div>
+                    <span class="flow-arrow" aria-hidden="true">→</span>
+                    <div class="flow-population">
+                      <span>Population 1</span>
+                      <strong><i>r</i><sub>1</sub>, <i>v</i><sub>1</sub></strong>
+                      <small>↺ <i>J s</i><sub>1</sub></small>
+                    </div>
+                    <span class="flow-arrow flow-arrow-labelled" aria-hidden="true">
+                      <em><i>J</i><sub>12</sub><i>s</i><sub>1</sub></em>→
+                    </span>
+                    <div class="flow-population">
+                      <span>Population 2</span>
+                      <strong><i>r</i><sub>2</sub>, <i>v</i><sub>2</sub></strong>
+                      <small>↺ <i>J s</i><sub>2</sub></small>
+                    </div>
+                    <span class="flow-arrow flow-arrow-labelled" aria-hidden="true">
+                      <em><i>J</i><sub>23</sub><i>s</i><sub>2</sub></em>→
+                    </span>
+                    <div class="flow-population">
+                      <span>Population 3</span>
+                      <strong><i>r</i><sub>3</sub>, <i>v</i><sub>3</sub></strong>
+                      <small>↺ <i>J s</i><sub>3</sub></small>
+                    </div>
+                  </div>
+
+                  <div class="flow-equations" aria-label="Inputs of the three-population chain">
+                    <span><i>I</i><sub>1</sub> = <i>I</i><sub>ext</sub></span>
+                    <span><i>I</i><sub>2</sub> = <i>J</i><sub>12</sub><i>s</i><sub>1</sub></span>
+                    <span><i>I</i><sub>3</sub> = <i>J</i><sub>23</sub><i>s</i><sub>2</sub></span>
+                  </div>
+                </article>
+              </div>
+
+              <div class="coupled-results-grid is-single">
+                <figure class="coupled-result-card">
+                  <figcaption>
+                    <strong>Response propagated through three populations</strong>
+                    <span><i>N</i> = 10,000 neurons per population</span>
+                  </figcaption>
+                  <img
+                    src="fig_cadena_tres_redes_10000.png"
+                    alt="Simulation of three QIF populations connected in a unidirectional chain, showing firing rate, mean membrane potential, and the actual input current received by each population."
+                    loading="lazy"
+                  />
+                </figure>
+              </div>
+
+              <p class="coupled-results-note">
+                In the <span class="tex-inline" data-tex="r_i">rᵢ</span> and
+                <span class="tex-inline" data-tex="v_i">vᵢ</span> rows, black
+                curves show the microscopic QIF networks and orange curves show
+                the FREs. The bottom row shows only the actual current received
+                by each microscopic population—there is no separate orange
+                current prediction. As the signal travels down the chain, its
+                onset is delayed and the damped oscillatory transient becomes
+                longer. Here
+                <span class="tex-inline" data-tex="J_{12}=J_{23}=3">J₁₂ = J₂₃ = 3</span>.
+              </p>
+            </aside>
+
+            <aside class="extra-visual coupled-networks-extra partial-coupling-extra" aria-labelledby="partial-coupling-title">
+              <p class="extra-label" id="partial-coupling-title">Extra · Partial neuron-to-neuron connectivity</p>
+              <p class="coupled-networks-intro">
+                The previous extra sends the population-averaged synaptic
+                activity to every neuron in the next population. Here the three
+                populations still contain 10,000 neurons each, but each
+                projection consists of only 1,000 fixed one-to-one connections.
+                Every selected source neuron transmits its own spike train to
+                one selected target neuron.
+              </p>
+
+              <article class="coupling-architecture-card">
+                <div class="coupling-card-heading">
+                  <span>1:1</span>
+                  <div>
+                    <strong>A sparse microscopic chain</strong>
+                    <small>No population average is used between populations.</small>
+                  </div>
+                </div>
+
+                <div class="partial-flow" aria-label="Three populations of ten thousand neurons connected by one thousand fixed neuron-to-neuron pairs">
+                  <div class="partial-population">
+                    <span>Population 1</span>
+                    <strong>10,000 neurons</strong>
+                    <div class="partial-counts">
+                      <em>1,000 sources</em>
+                      <small>9,000 other</small>
+                    </div>
+                  </div>
+
+                  <div class="partial-link" aria-hidden="true">
+                    <span>1,000 fixed pairs</span>
+                    <strong>→</strong>
+                  </div>
+
+                  <div class="partial-population">
+                    <span>Population 2</span>
+                    <strong>10,000 neurons</strong>
+                    <div class="partial-counts">
+                      <em>1,000 targets + sources</em>
+                      <small>9,000 other</small>
+                    </div>
+                  </div>
+
+                  <div class="partial-link" aria-hidden="true">
+                    <span>1,000 fixed pairs</span>
+                    <strong>→</strong>
+                  </div>
+
+                  <div class="partial-population">
+                    <span>Population 3</span>
+                    <strong>10,000 neurons</strong>
+                    <div class="partial-counts">
+                      <em>1,000 targets</em>
+                      <small>9,000 other</small>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="partial-rules">
+                  <span>Linked target: receives the spike train of its paired source</span>
+                  <span>Unlinked neuron: inter-population current = 0</span>
+                  <span>Within each population: recurrent coupling <i>J s</i><sub>i</sub></span>
+                </div>
+              </article>
+
+              <div class="simulation-only-badge">
+                <strong>Microscopic simulation only</strong>
+                <span>No FRE or analytical prediction is calculated for this connectivity.</span>
+              </div>
+
+              <figure class="coupled-result-card partial-result-card">
+                <figcaption>
+                  <strong>Response with 1,000 connected neurons per projection</strong>
+                  <span>Three populations · <i>N</i> = 10,000 each</span>
+                </figcaption>
+                <img
+                  src="fig_cadena_tres_redes_parcial_10000_1000.png"
+                  alt="Microscopic simulation of three populations of ten thousand QIF neurons, with one thousand fixed one-to-one connections between adjacent populations and no analytical firing-rate prediction."
+                  loading="lazy"
+                />
+              </figure>
+
+              <p class="coupled-results-note">
+                All curves come directly from the neuron simulation. The first
+                row is the firing rate of each complete population. The second
+                row separates the selected 1,000 neurons (red) from the
+                remaining 9,000 (gray), making the local effect of the sparse
+                input visible. The third row is the mean membrane potential.
+                The last row shows the external input to Population 1 and the
+                measured mean current across the connected targets in
+                Populations 2 and 3.
+              </p>
+            </aside>
+
+            <p>
+              The right-hand panels of Fig. 2 show the response of the model to
+              a periodic current, which drives the system from one side of the
+              bistable region to the other. As a result, we observe periodic
+              bursting behavior when the system visits the stable-focus region
+              of the phase diagram, Fig. 1(a).
+            </p>
+
+            <p>
+              To further illustrate the potential of the FREs (12) to predict
+              and investigate complex dynamics in ensembles of spiking neurons,
+              we present here a simple situation where the system of QIF neurons
+              exhibits macroscopic chaos. This is observed by increasing the
+              frequency <span class="tex-inline" data-tex="\omega">ω</span> of
+              the sinusoidal driving, so that the system cannot trivially follow
+              the stable fixed point at each cycle of the applied current.
+            </p>
+
+            <p>
+              Figure 3(a) shows a phase diagram obtained using Eq. (12). The
+              shaded regions indicate parameter values where the rate model has
+              either a single chaotic attractor (in black) or a chaotic
+              attractor coexisting with a periodic orbit (in cyan). A trajectory
+              on the chaotic attractor is depicted in Fig. 3(b), and the clearly
+              irregular time series of the firing rate is shown in orange in
+              Fig. 3(d). Using the same parameters, we perform numerical
+              simulations of the QIF neurons [Eqs. (1) and (2)], finding a
+              similar attractor and irregular dynamics as in the rate model; see
+              Figs. 3(c) and 3(d). To obtain the time series shown in Fig. 3(d),
+              we run the QIF neurons numerically and, after a long transient, at
+              time <span class="tex-inline" data-tex="t=0">t = 0</span>, the
+              rate model Eq. (12) is initiated with the values of
+              <span class="tex-inline" data-tex="r">r</span> and
+              <span class="tex-inline" data-tex="v">v</span> obtained from the
+              population of QIF neurons. The time series of the two systems,
+              which are initially close, rapidly diverge, reflecting the chaotic
+              nature of the system.
+            </p>
+
+            <figure class="paper-figure paper-figure-tall">
+              <img
+                src="fig3.png"
+                alt="Figure 3 showing the regions of macroscopic chaos, chaotic trajectories from the firing-rate and QIF models, their irregular firing-rate time series, and raster plots before and after ordering neurons by intrinsic current."
+                loading="lazy"
+              />
+              <figcaption class="paper-caption-inline">
+                <strong>Firing-rate model predicts the existence of macroscopic chaos in ensemble QIF neurons [Eq. (1)] with an injected periodic current <span class="tex-inline" data-tex="I(t)=I_0\sin(\omega t)">I(t) = I₀ sin(ωt)</span>.</strong>
+                <span><strong>(a)</strong> Phase diagram with the regions where chaos is found, obtained using the rate model Eq. (12). In the black-shaded region, there is only one chaotic attractor, whereas in the cyan region the chaotic attractor coexists with a periodic attractor. Dotted lines correspond to the bistability boundary of Fig. 1(a), depicted to facilitate comparison. <strong>(b)</strong> Chaotic trajectory obtained by simulating the FREs (12); the Lyapunov exponent is <span class="tex-inline" data-tex="\lambda=0.183\ldots">λ = 0.183…</span>. <strong>(c)</strong> Chaotic trajectory obtained from the QIF neurons—parameters corresponding to the yellow triangle symbol in <strong>(a)</strong>. <strong>(d)</strong> Time series for the rate model (orange) and QIF model (black). <strong>(e)</strong> Raster plot corresponding to 300 randomly selected neurons. <strong>(f)</strong> Same raster plot as in <strong>(e)</strong>, ordering neurons according to their intrinsic current <span class="tex-inline" data-tex="\eta_k">ηₖ</span>. Parameters: <span class="tex-inline" data-tex="I_0=3">I₀ = 3</span>, <span class="tex-inline" data-tex="\omega=\pi">ω = π</span>, <span class="tex-inline" data-tex="\bar\eta=-2.5">η̄ = −2.5</span>, and <span class="tex-inline" data-tex="J=10.5">J = 10.5</span> [triangle symbol in <strong>(a)</strong>].</span>
+              </figcaption>
+            </figure>
+
+            <p>
+              Finally, to illustrate this chaotic state at the microscopic
+              level, Fig. 3(e) shows the raster plot for 300 randomly chosen
+              neurons, corresponding to the time series in Fig. 3(d). The
+              irregular firing of neurons in Fig. 3(e) has some underlying
+              structure that may be visualized by ordering the same set of
+              neurons according to their intrinsic currents as
+              <span class="tex-inline" data-tex="\eta_k&lt;\eta_{k+1}">ηₖ &lt; ηₖ₊₁</span>,
+              with <span class="tex-inline" data-tex="k\in[1,300]">k ∈ [1,300]</span>;
+              see Fig. 3(f). Clearly, the maxima of the firing rate coincide
+              with the synchronous firings of clusters of neurons with similar
+              <span class="tex-inline" data-tex="\eta">η</span> values. The size
+              of these clusters is highly irregular in time, in concomitance
+              with the chaotic behavior.
+            </p>
+          </section>
+        </div>
+      </section>
+
+      <section class="slide original-paper" id="original-paper" aria-labelledby="original-paper-title">
+        <div class="slide-content">
+          <p class="kicker">Original paper</p>
+
+          <div class="paper-pdf-header">
+            <div>
+              <h2 id="original-paper-title">Macroscopic Description for Networks of Spiking Neurons</h2>
+              <p>
+                Read the complete article used throughout this visual
+                explanation.
+              </p>
+            </div>
+
+            <a
+              class="pdf-open-link"
+              href="Macroscopic%20Description%20for%20Networks%20of%20Spiking%20Neurons.pdf"
+              target="_blank"
+              rel="noopener"
+            >
+              Open PDF <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+
+          <div class="pdf-viewer-shell">
+            <object
+              class="pdf-viewer"
+              data="Macroscopic%20Description%20for%20Networks%20of%20Spiking%20Neurons.pdf#view=FitH"
+              type="application/pdf"
+              aria-label="Full original paper: Macroscopic Description for Networks of Spiking Neurons"
+            >
+              <p>
+                This browser cannot display the PDF inside the page.
+                <a
+                  href="Macroscopic%20Description%20for%20Networks%20of%20Spiking%20Neurons.pdf"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  Open the original paper in a new tab.
+                </a>
+              </p>
+            </object>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script defer src="script.js?v=11"></script>
+  </body>
+</html>
